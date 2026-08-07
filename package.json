@@ -1,0 +1,58 @@
+{
+  "name": "brain-hunt-telugu-ai-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "next": "15.0.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "typescript": "5.6.3",
+    "@prisma/client": "5.20.0",
+    "prisma": "5.20.0",
+    "@supabase/supabase-js": "2.45.4",
+    "@supabase/ssr": "0.5.1",
+    "tailwindcss": "3.4.13",
+    "postcss": "8.4.47",
+    "autoprefixer": "10.4.20",
+    "zod": "3.23.8",
+    "jsonwebtoken": "9.0.2",
+    "bcryptjs": "2.4.3",
+    "jose": "5.9.3",
+    "@upstash/ratelimit": "2.0.4",
+    "@upstash/redis": "1.34.0",
+    "next-pwa": "5.6.0",
+    "idb": "8.0.0",
+    "lucide-react": "0.451.0",
+    "clsx": "2.1.1",
+    "tailwind-merge": "2.5.3",
+    "zustand": "5.0.0",
+    "swr": "2.2.5",
+    "sharp": "0.33.5",
+    "nanoid": "5.0.7",
+    "date-fns": "4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.7.5",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.1",
+    "@types/jsonwebtoken": "9.0.7",
+    "@types/bcryptjs": "2.4.6",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.0.3",
+    "tsx": "4.19.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
