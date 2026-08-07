@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Owner {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  auditLogs AuditLog[]
+}
+
+model ProviderConfig {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String   // "image" | "video"
+  apiKeyEnv String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  generations Generation[]
+}
+
+model Generation {
+  id         String   @id @default(cuid())
+  prompt     String
+  resultUrl  String?
+  status     String   @default("pending") // pending | completed | failed
+  providerId String
+  provider   ProviderConfig @relation(fields: [providerId], references: [id])
+  createdAt  DateTime @default(now())
+
+  storageFiles StorageFile[]
+}
+
+model AITool {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  config      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ThemeSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model StorageFile {
+  id           String     @id @default(cuid())
+  filePath     String
+  fileType     String
+  sizeBytes    Int?
+  generationId String?
+  generation   Generation? @relation(fields: [generationId], references: [id])
+  createdAt    DateTime   @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  ownerId   String
+  owner     Owner    @relation(fields: [ownerId], references: [id])
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+model RateLimitLog {
+  id        String   @id @default(cuid())
+  key       String
+  count     Int      @default(1)
+  windowAt  DateTime @default(now())
+}
+
+model BackupRecord {
+  id        String   @id @default(cuid())
+  fileName  String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
