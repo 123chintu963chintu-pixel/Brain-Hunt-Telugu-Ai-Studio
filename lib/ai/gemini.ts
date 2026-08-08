@@ -1,6 +1,6 @@
 // lib/ai/gemini.ts
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL = "google/gemini-2.5-flash-image-preview";
+const MODEL = "google/gemini-2.5-flash-image";
 
 export type GeminiImageResult = {
   base64: string;
@@ -45,7 +45,6 @@ export async function generateImage(prompt: string): Promise<GeminiImageResult> 
     throw new Error("No image returned from OpenRouter response");
   }
 
-  // imageUrl is a data URL like "data:image/png;base64,XXXXX"
   const match = imageUrl.match(/^data:(.+);base64,(.+)$/);
 
   if (!match) {
@@ -53,4 +52,4 @@ export async function generateImage(prompt: string): Promise<GeminiImageResult> 
   }
 
   return { mimeType: match[1], base64: match[2] };
-      }
+}
