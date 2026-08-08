@@ -19,3 +19,11 @@ export async function verifyOwnerToken(token: string) {
     return null;
   }
 }
+
+export async function getOwnerSession() {
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const token = cookieStore.get(env.OWNER_SESSION_COOKIE_NAME)?.value;
+  if (!token) return null;
+  return verifyOwnerToken(token);
+}
