@@ -19,36 +19,42 @@ model Owner {
 }
 
 model ProviderConfig {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  type      String   // "image" | "video"
-  apiKeyEnv String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  name       String   @unique
+  type       String   // "image" | "video"
+  apiKeyEnv  String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   generations Generation[]
 }
 
 model Generation {
-  id         String   @id @default(cuid())
-  prompt     String
-  resultUrl  String?
-  status     String   @default("pending") // pending | completed | failed
-  providerId String
-  provider   ProviderConfig @relation(fields: [providerId], references: [id])
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid())
+  prompt      String
+  resultUrl   String?
+  status      String   @default("pending") // pending | completed | failed
+  providerId  String
+  provider    ProviderConfig @relation(fields: [providerId], references: [id])
+  createdAt   DateTime @default(now())
 
   storageFiles StorageFile[]
 }
 
 model AITool {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  config      Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  description    String?
+  category       String   // "image" | "video" | "text"
+  icon           String?
+  promptTemplate String
+  provider       String
+  isActive       Boolean  @default(true)
+  config         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model ThemeSetting {
@@ -59,13 +65,13 @@ model ThemeSetting {
 }
 
 model StorageFile {
-  id           String     @id @default(cuid())
-  filePath     String
-  fileType     String
-  sizeBytes    Int?
-  generationId String?
-  generation   Generation? @relation(fields: [generationId], references: [id])
-  createdAt    DateTime   @default(now())
+  id            String      @id @default(cuid())
+  filePath      String
+  fileType      String
+  sizeBytes     Int?
+  generationId  String?
+  generation    Generation? @relation(fields: [generationId], references: [id])
+  createdAt     DateTime    @default(now())
 }
 
 model AuditLog {
@@ -78,10 +84,10 @@ model AuditLog {
 }
 
 model RateLimitLog {
-  id        String   @id @default(cuid())
-  key       String
-  count     Int      @default(1)
-  windowAt  DateTime @default(now())
+  id       String   @id @default(cuid())
+  key      String
+  count    Int      @default(1)
+  windowAt DateTime @default(now())
 }
 
 model BackupRecord {
