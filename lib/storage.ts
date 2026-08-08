@@ -1,6 +1,6 @@
 // lib/storage.ts
 import { randomUUID } from "crypto";
-import { supabaseAdmin } from "./supabase";
+import { createSupabaseAdminClient } from "./supabase";
 
 const BUCKET_NAME = "brain-hunt-media";
 
@@ -9,11 +9,12 @@ export async function uploadBase64Image(
   mimeType: string,
   folder: string = "generated"
 ): Promise<string> {
+  const admin = createSupabaseAdminClient();
   const buffer = Buffer.from(base64, "base64");
   const extension = mimeType.split("/")[1] || "png";
   const fileName = `${folder}/${randomUUID()}.${extension}`;
 
-  const { error } = await supabaseAdmin.storage
+  const { error } = await admin.storage
     .from(BUCKET_NAME)
     .upload(fileName, buffer, {
       contentType: mimeType,
@@ -24,9 +25,9 @@ export async function uploadBase64Image(
     throw new Error(`Supabase upload failed: ${error.message}`);
   }
 
-  const { data } = supabaseAdmin.storage
+  const { data } = admin.storage
     .from(BUCKET_NAME)
     .getPublicUrl(fileName);
 
   return data.publicUrl;
-    }
+}
