@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="te">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Hunt Telugu AI Studio v3</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Brain Hunt AI">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  * { font-family: 'Poppins', 'Noto Sans Telugu', sans-serif; }
+  body {
+    background: #05050a;
+    color: #e9e9f5;
+    overflow-x: hidden;
+  }
+  .telugu { font-family: 'Noto Sans Telugu', 'Poppins', sans-serif; }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #0a0a14; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#7c3aed,#ec4899); border-radius: 10px; }
+
+  .glow-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(124,58,237,0.25), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(236,72,153,0.2), transparent 40%),
+      radial-gradient(circle at 50% 80%, rgba(59,130,246,0.2), transparent 45%),
+      #05050a;
+    animation: drift 20s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(30deg); }
+  }
+
+  .glass {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+  }
+  .glass-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    transition: all 0.35s cubic-bezier(.2,.9,.3,1);
+  }
+  .glass-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(168,85,247,0.5);
+    box-shadow: 0 20px 50px -10px rgba(124,58,237,0.4);
+  }
+
+  .gradient-text {
+    background: linear-gradient(90deg, #a855f7, #ec4899, #6366f1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-primary {
+    background: linear-gradient(90deg,#7c3aed,#ec4899);
+    box-shadow: 0 10px 30px -8px rgba(236,72,153,0.6);
+    transition: all .3s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 15px 40px -8px rgba(236,72,153,0.8);
+  }
+
+  .pulse-dot {
+    box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+    animation: pulse-green 2s infinite;
+  }
+  @keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+
+  .float { animation: floaty 6s ease-in-out infinite; }
+  @keyframes floaty {
+    0%,100% { transform: translateY(0px); }
+    50% { transform: translateY(-14px); }
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(90deg,#7c3aed,#ec4899);
+    color: white;
+  }
+
+  .provider-toggle input:checked + .toggle-bg {
+    background: linear-gradient(90deg,#7c3aed,#ec4899);
+  }
+  .provider-toggle input:checked + .toggle-bg .toggle-dot {
+    transform: translateX(20px);
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+  .fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .roadmap-line {
+    background: linear-gradient(180deg, #7c3aed, #ec4899);
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .mobile-menu { transition: all 0.3s ease; }
+</style>
+ </head>
+ <body class="antialiased">
+  <div class="glow-bg"></div>
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 glass">
+   <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+     <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg">🧠</div>
+     <span class="font-bold text-white text-lg tracking-tight">Brain Hunt <span class="gradient-text">AI Studio</span></span> <span class="ml-2 text-[10px] px-2 py-1 rounded-full bg-white/10 border border-white/10 text-purple-300 mono">v3</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm text-gray-300">
+     <a href="#modules" class="hover:text-white transition">Modules</a> <a href="#dashboard" class="hover:text-white transition">Dashboard</a> <a href="#providers" class="hover:text-white transition">AI Providers</a> <a href="#stack" class="hover:text-white transition">Tech Stack</a> <a href="#roadmap" class="hover:text-white transition">Roadmap</a>
+    </div>
+    <button id="installBtn" class="hidden items-center gap-1.5 glass text-white text-sm font-semibold px-4 py-2.5 rounded-full mr-3 hover:bg-white/10 transition">⬇️ Install App</button>
+    <button class="hidden md:inline-flex btn-primary text-white text-sm font-semibold px-5 py-2.5 rounded-full">Owner Login</button>
+    <button id="menuBtn" class="md:hidden text-white text-2xl">☰</button>
+   </div>
+   <div id="mobileMenu" class="mobile-menu md:hidden hidden flex-col gap-4 px-5 pb-5 text-gray-300 text-sm">
+    <a href="#modules" class="block py-2 border-b border-white/5">Modules</a> <a href="#dashboard" class="block py-2 border-b border-white/5">Dashboard</a> <a href="#providers" class="block py-2 border-b border-white/5">AI Providers</a> <a href="#stack" class="block py-2 border-b border-white/5">Tech Stack</a> <a href="#roadmap" class="block py-2">Roadmap</a>
+   </div>
+  </nav>
+  <!-- HERO -->
+  <section class="relative pt-40 pb-24 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="text-center max-w-4xl mx-auto">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs text-purple-200 mb-6">
+     <span class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></span> Hunt Mission మొదలైంది — Status: Active Development
+    </div>
+    <h1 class="telugu text-4xl sm:text-6xl font-extrabold leading-tight text-white">సూపర్ చింటూ ప్రెజెంట్స్
+     <br>
+     <span class="gradient-text">Brain Hunt Telugu AI Studio</span></h1>
+    <p class="telugu mt-6 text-gray-400 text-lg sm:text-xl">ఇది ఒక UI template కాదు — ఇది నిజంగా <span class="text-white font-semibold">deploy అయ్యే</span> Production-Grade AI Studio. Image AI, Video AI, Owner Dashboard — అన్నీ ఒక్క roof కింద.</p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+     <a href="#dashboard" class="btn-primary text-white font-semibold px-7 py-3.5 rounded-full inline-flex items-center justify-center">🚀 Enter Dashboard</a>
+     <a href="#stack" class="glass text-white font-semibold px-7 py-3.5 rounded-full hover:bg-white/10 transition inline-flex items-center justify-center">📄 View Architecture</a>
+    </div>
+    <div class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+     <div class="glass-card rounded-2xl p-4">
+      <div class="text-2xl font-bold text-white">8</div>
+      <div class="text-xs text-gray-400 mt-1">Roadmap Parts</div>
+     </div>
+     <div class="glass-card rounded-2xl p-4">
+      <div class="text-2xl font-bold text-white">7</div>
+      <div class="text-xs text-gray-400 mt-1">Core Modules</div>
+     </div>
+     <div class="glass-card rounded-2xl p-4">
+      <div class="text-2xl font-bold text-white">7</div>
+      <div class="text-xs text-gray-400 mt-1">AI Providers</div>
+     </div>
+     <div class="glass-card rounded-2xl p-4">
+      <div class="text-2xl font-bold text-white">4</div>
+      <div class="text-xs text-gray-400 mt-1">Hard Rules</div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <!-- RULES -->
+  <section class="py-16 px-5 sm:px-8 max-w-7xl mx-auto">
+   <h2 class="telugu text-center text-3xl font-bold text-white fade-up">Hunt Rules <span class="gradient-text">#నాలుగు</span></h2>
+   <p class="text-center text-gray-400 mt-2 fade-up">ఈ project ఈ నాలుగు rules తో మాత్రమే నడుస్తుంది</p>
+   <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-300 font-bold mb-4">01</div>
+     <h3 class="text-white font-semibold mb-2">No Mid Redesign</h3>
+     <p class="text-sm text-gray-400 telugu">ఈ projectని మధ్యలో redesign చేయం.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-300 font-bold mb-4">02</div>
+     <h3 class="text-white font-semibold mb-2">Production Only</h3>
+     <p class="text-sm text-gray-400 telugu">Production architecture మాత్రమే.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold mb-4">03</div>
+     <h3 class="text-white font-semibold mb-2">No Fakes</h3>
+     <p class="text-sm text-gray-400 telugu">Fake AI generation, fake downloads, fake APIs ఉండవు.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="w-10 h-10 rounded-lg bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-300 font-bold mb-4">04</div>
+     <h3 class="text-white font-semibold mb-2">One at a Time</h3>
+     <p class="text-sm text-gray-400 telugu">ఒక feature పూర్తయ్యాక మాత్రమే next feature.</p>
+    </div>
+   </div>
+  </section>
+  <!-- MODULES -->
+  <section id="modules" class="py-20 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="text-center mb-12">
+    <span class="text-purple-400 text-sm font-semibold uppercase tracking-widest">Modules</span>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-2">Core <span class="gradient-text">Modules</span></h2>
+   </div>
+   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">🏠</div>
+     <h3 class="text-white font-semibold text-lg">Home</h3>
+     <p class="text-sm text-gray-400 mt-2">Landing experience &amp; studio overview.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">🖼️</div>
+     <h3 class="text-white font-semibold text-lg">Image AI</h3>
+     <p class="text-sm text-gray-400 mt-2">Imagen, OpenAI Images, Fal.ai, Stability.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">🎬</div>
+     <h3 class="text-white font-semibold text-lg">Video AI</h3>
+     <p class="text-sm text-gray-400 mt-2">Veo, Fal.ai, Runway, Pika switchable.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">🧩</div>
+     <h3 class="text-white font-semibold text-lg">AI Tools</h3>
+     <p class="text-sm text-gray-400 mt-2">Custom AI Tool Builder engine.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">🕘</div>
+     <h3 class="text-white font-semibold text-lg">History</h3>
+     <p class="text-sm text-gray-400 mt-2">Full generation history with pagination.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up">
+     <div class="text-3xl mb-4">⚙️</div>
+     <h3 class="text-white font-semibold text-lg">Settings</h3>
+     <p class="text-sm text-gray-400 mt-2">Account, theme &amp; preference control.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-6 fade-up sm:col-span-2">
+     <div class="text-3xl mb-4">👑</div>
+     <h3 class="text-white font-semibold text-lg">Owner Dashboard</h3>
+     <p class="text-sm text-gray-400 mt-2">Full control center — providers, branding, security, backups, storage &amp; app builder.</p>
+    </div>
+   </div>
+  </section>
+  <!-- DASHBOARD PREVIEW -->
+  <section id="dashboard" class="py-20 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="text-center mb-12">
+    <span class="text-pink-400 text-sm font-semibold uppercase tracking-widest">Live Preview</span>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-2">Owner <span class="gradient-text">Dashboard</span></h2>
+    <p class="text-gray-400 mt-3">కింద dashboard sections క్లిక్ చేసి explore చేయండి</p>
+   </div>
+   <div class="glass rounded-3xl overflow-hidden flex flex-col lg:flex-row min-h-[480px]">
+    <!-- Sidebar -->
+    <div class="lg:w-64 bg-black/30 border-r border-white/5 p-4">
+     <div class="flex items-center gap-2 px-2 py-3 mb-2">
+      <div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div>
+      <span class="text-xs text-gray-400">System Online</span>
+     </div>
+     <div id="dashTabs" class="flex flex-col gap-1 text-sm">
+      <button data-tab="overview" class="tab-btn active text-left px-4 py-3 rounded-xl text-gray-300 transition">📊 Overview</button>
+      <button data-tab="image" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🖼️ Image AI</button>
+      <button data-tab="video" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🎬 Video AI</button>
+      <button data-tab="builder" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🧩 AI Tool Builder</button>
+      <button data-tab="theme" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🎨 Theme Studio</button>
+      <button data-tab="branding" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🏷️ Branding</button>
+      <button data-tab="history" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🕘 History</button>
+      <button data-tab="storage" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🗄️ Storage</button>
+      <button data-tab="security" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🔒 Security</button>
+      <button data-tab="backup" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">💾 Backup</button>
+      <button data-tab="appbuilder" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">📱 App Builder</button>
+      <button data-tab="provider" class="tab-btn text-left px-4 py-3 rounded-xl text-gray-300 transition hover:bg-white/5">🔌 Provider Settings</button>
+     </div>
+    </div>
+    <!-- Main content -->
+    <div class="flex-1 p-6 sm:p-8" id="dashContent">
+     <!-- Content injected via JS -->
+    </div>
+   </div>
+  </section>
+  <!-- AI PROVIDERS -->
+  <section id="providers" class="py-20 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="text-center mb-12">
+    <span class="text-indigo-400 text-sm font-semibold uppercase tracking-widest">Switchable</span>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-2">AI <span class="gradient-text">Providers</span></h2>
+    <p class="text-gray-400 mt-3">Dashboard నుంచి provider ఎప్పుడైనా మార్చుకోవచ్చు — API keys ఎప్పుడూ server-side మాత్రమే.</p>
+   </div>
+   <div class="grid lg:grid-cols-2 gap-8">
+    <div class="glass-card rounded-2xl p-6">
+     <h3 class="text-white font-semibold text-lg mb-5 flex items-center gap-2">🖼️ Image Providers</h3>
+     <div class="space-y-3" id="imageProviders">
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">OpenAI Images</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" checked class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Google Imagen</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Fal.ai</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Stability AI</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+     </div>
+    </div>
+    <div class="glass-card rounded-2xl p-6">
+     <h3 class="text-white font-semibold text-lg mb-5 flex items-center gap-2">🎬 Video Providers</h3>
+     <div class="space-y-3" id="videoProviders">
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Google Veo</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" checked class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Fal.ai</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Runway</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+       <span class="text-gray-200 text-sm">Pika</span> <label class="provider-toggle relative inline-flex items-center cursor-pointer"> <input type="checkbox" class="sr-only"> 
+        <div class="toggle-bg w-11 h-6 bg-white/10 rounded-full transition">
+         <div class="toggle-dot w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition"></div>
+        </div> </label>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="activeProviderBanner" class="mt-6 text-center text-sm text-purple-300 glass rounded-xl py-3 px-4">
+    Active → Image: <span class="font-semibold text-white">OpenAI Images</span> &nbsp;|&nbsp; Video: <span class="font-semibold text-white">Google Veo</span>
+   </div>
+  </section>
+  <!-- SECURITY & PERFORMANCE -->
+  <section class="py-20 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="grid lg:grid-cols-2 gap-10">
+    <div>
+     <span class="text-red-400 text-sm font-semibold uppercase tracking-widest">Protection</span>
+     <h2 class="text-3xl font-bold text-white mt-2 mb-6">Security <span class="gradient-text">First</span></h2>
+     <div class="space-y-4">
+      <div class="glass-card rounded-xl p-4 flex items-start gap-3">
+       <span class="text-xl">🔑</span>
+       <div>
+        <h4 class="text-white font-medium text-sm">API Keys Server-Only</h4>
+        <p class="text-gray-400 text-xs mt-1">ఎప్పుడూ client కి expose కాదు.</p>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-4 flex items-start gap-3">
+       <span class="text-xl">🌐</span>
+       <div>
+        <h4 class="text-white font-medium text-sm">Environment Variables Only</h4>
+        <p class="text-gray-400 text-xs mt-1">Secrets .env లో మాత్రమే.</p>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-4 flex items-start gap-3">
+       <span class="text-xl">🪪</span>
+       <div>
+        <h4 class="text-white font-medium text-sm">JWT Owner Login</h4>
+        <p class="text-gray-400 text-xs mt-1">Secure token-based authentication.</p>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-4 flex items-start gap-3">
+       <span class="text-xl">⏱️</span>
+       <div>
+        <h4 class="text-white font-medium text-sm">Rate Limiting &amp; Validation</h4>
+        <p class="text-gray-400 text-xs mt-1">అన్ని requests validated &amp; throttled.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div>
+     <span class="text-emerald-400 text-sm font-semibold uppercase tracking-widest">Speed</span>
+     <h2 class="text-3xl font-bold text-white mt-2 mb-6">Performance <span class="gradient-text">Optimized</span></h2>
+     <div class="grid grid-cols-2 gap-3">
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">⚡ Lazy Loading</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">✂️ Code Splitting</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">🖼️ Image Optimization</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">💀 Skeleton Loading</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">📄 Pagination</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">🗃️ IndexedDB Cache</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">👷 Background Workers</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300">🎞️ Thumbnail Loading</div>
+      <div class="glass-card rounded-xl p-4 text-sm text-gray-300 col-span-2">🚫 Request Cancellation</div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <!-- TECH STACK -->
+  <section id="stack" class="py-20 px-5 sm:px-8 max-w-7xl mx-auto">
+   <div class="text-center mb-12">
+    <span class="text-blue-400 text-sm font-semibold uppercase tracking-widest">Final Tech Stack</span>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-2">Built With <span class="gradient-text">Real Tech</span></h2>
+   </div>
+   <div class="flex flex-wrap justify-center gap-3">
+    <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">Next.js 15</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">React 19</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">TypeScript</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">Tailwind CSS</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">Prisma ORM</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">PostgreSQL</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">Supabase Storage</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">Vercel</span> <span class="glass-card px-5 py-2.5 rounded-full text-sm text-white">PWA</span>
+   </div>
+   <div class="mt-10 glass-card rounded-2xl p-6 max-w-3xl mx-auto">
+    <h4 class="text-white font-semibold mb-3 mono text-sm">📁 Folder Structure</h4>
+    <pre class="text-xs text-gray-400 mono leading-relaxed overflow-x-auto">brain-hunt-telugu-ai-studio/
+├── app/          ├── components/   ├── dashboard/
+├── ai/           ├── lib/          ├── prisma/
+├── public/       ├── services/     ├── api/
+├── styles/       ├── hooks/        ├── types/
+├── utils/        ├── worker/       ├── storage/
+└── pwa/</pre>
+   </div>
+  </section>
+  <!-- ROADMAP -->
+  <section id="roadmap" class="py-20 px-5 sm:px-8 max-w-4xl mx-auto">
+   <div class="text-center mb-12">
+    <span class="text-fuchsia-400 text-sm font-semibold uppercase tracking-widest">Timeline</span>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-2">Mission <span class="gradient-text">Roadmap</span></h2>
+    <p class="text-gray-400 mt-3 telugu">తొందరపడకుండా, ఒక్కో భాగం పూర్తిగా చేసి ముందుకు వెళ్తాం.</p>
+   </div>
+   <div class="relative pl-10">
+    <div class="absolute left-3 top-2 bottom-2 w-0.5 roadmap-line rounded-full"></div>
+    <div class="space-y-8">
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-xs">✓</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 1 — Architecture <span class="text-green-400 text-xs">✅ Completed</span></h4>
+       <p class="text-gray-400 text-sm mt-1">Project structure, rules &amp; tech stack finalized.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-purple-500/40 border border-purple-400 flex items-center justify-center text-xs">2</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 2 — Backend &amp; Database</h4>
+       <p class="text-gray-400 text-sm mt-1">Prisma schema, PostgreSQL setup, auth foundation.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">3</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 3 — Image AI</h4>
+       <p class="text-gray-400 text-sm mt-1">Real image generation module integration.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">4</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 4 — Video AI</h4>
+       <p class="text-gray-400 text-sm mt-1">Real video generation module integration.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">5</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 5 — Owner Dashboard</h4>
+       <p class="text-gray-400 text-sm mt-1">Full control center build-out.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">6</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 6 — AI Tool Builder + Theme Studio</h4>
+       <p class="text-gray-400 text-sm mt-1">Custom tools &amp; theming engine.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">7</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 7 — PWA + App Builder</h4>
+       <p class="text-gray-400 text-sm mt-1">Offline support &amp; installable app builder.</p>
+      </div>
+     </div>
+     <div class="relative fade-up">
+      <div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">8</div>
+      <div class="glass-card rounded-xl p-5">
+       <h4 class="text-white font-semibold">Part 8 — Testing + Vercel Production</h4>
+       <p class="text-gray-400 text-sm mt-1">Final QA &amp; production deployment.</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <!-- CTA -->
+  <section class="py-20 px-5 sm:px-8 max-w-5xl mx-auto text-center">
+   <div class="glass-card rounded-3xl p-10 sm:p-14 relative overflow-hidden">
+    <div class="float text-5xl mb-4">🎯</div>
+    <h2 class="text-3xl sm:text-4xl font-bold text-white telugu">సిద్ధంగా ఉన్నారా, Part 2 కి?</h2>
+    <p class="text-gray-400 mt-4 max-w-xl mx-auto">Backend &amp; Database architecture తో Hunt Mission ముందుకు సాగుతుంది.</p>
+    <button class="btn-primary text-white font-semibold px-8 py-4 rounded-full mt-8">Continue to Part 2 →</button>
+   </div>
+  </section>
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5 py-10 px-5 sm:px-8">
+   <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm">🧠</div>
+     <span class="text-white font-semibold text-sm">Brain Hunt Telugu AI Studio v3</span>
+    </div>
+    <p class="text-gray-500 text-xs">© 2024 Hunt Mission. Production Architecture Only.</p>
+   </div>
+  </footer>
+  <script>
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Fade up on scroll
+  const faders = document.querySelectorAll('.fade-up');
+  const appearOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+  const appearOnScroll = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('show');
+      observer.unobserve(entry.target);
+    });
+  }, appearOptions);
+  faders.forEach(f => appearOnScroll.observe(f));
+
+  // Dashboard tabs
+  const tabContent = {
+    overview: {
+      title: "📊 Overview",
+      body: `<div class="grid sm:grid-cols-3 gap-4 mb-6">
+        <div class="glass rounded-xl p-4"><p class="text-gray-400 text-xs">Total Generations</p><p class="text-2xl font-bold text-white mt-1">12,480</p></div>
+        <div class="glass rounded-xl p-4"><p class="text-gray-400 text-xs">Active Providers</p><p class="text-2xl font-bold text-white mt-1">2 / 7</p></div>
+        <div class="glass rounded-xl p-4"><p class="text-gray-400 text-xs">Storage Used</p><p class="text-2xl font-bold text-white mt-1">64.2 GB</p></div>
+      </div>
+      <p class="text-gray-400 text-sm">System status, recent activity మరియు quick actions ఇక్కడ కనిపిస్తాయి.</p>`
+    },
+    image: { title: "🖼️ Image AI", body: `<p class="text-gray-400 text-sm">Prompt input, style presets, provider selection (OpenAI / Imagen / Fal.ai / Stability) మరియు generation queue ఇక్కడ ఉంటుంది.</p>` },
+    video: { title: "🎬 Video AI", body: `<p class="text-gray-400 text-sm">Text-to-video, image-to-video workflows Veo / Fal.ai / Runway / Pika providers తో.</p>` },
+    builder: { title: "🧩 AI Tool Builder", body: `<p class="text-gray-400 text-sm">Drag & drop custom AI tool creation — prompts, workflows, output formatting.</p>` },
+    theme: { title: "🎨 Theme Studio", body: `<p class="text-gray-400 text-sm">Live theme editor — colors, gradients, typography, dark/light modes.</p>` },
+    branding: { title: "🏷️ Branding", body: `<p class="text-gray-400 text-sm">Logo, name, favicon, meta tags & custom domain management.</p>` },
+    history: { title: "🕘 History", body: `<p class="text-gray-400 text-sm">Paginated generation history with thumbnail previews & filters.</p>` },
+    storage: { title: "🗄️ Storage", body: `<p class="text-gray-400 text-sm">Supabase Storage usage, bucket management & cleanup tools.</p>` },
+    security: { title: "🔒 Security", body: `<p class="text-gray-400 text-sm">JWT sessions, rate limits, request validation logs & access control.</p>` },
+    backup: { title: "💾 Backup", body: `<p class="text-gray-400 text-sm">Automated database & storage backups with restore points.</p>` },
+    appbuilder: { title: "📱 App Builder", body: `<p class="text-gray-400 text-sm">PWA manifest builder — icons, splash screens, install prompts.</p>` },
+    provider: { title: "🔌 Provider Settings", body: `<p class="text-gray-400 text-sm">Switch active Image/Video AI providers & manage server-side API keys securely.</p>` }
+  };
+
+  const dashTabs = document.getElementById('dashTabs');
+  const dashContent = document.getElementById('dashContent');
+
+  function renderTab(key) {
+    const data = tabContent[key];
+    dashContent.innerHTML = `<h3 class="text-xl font-bold text-white mb-5">${data.title}</h3>${data.body}`;
+  }
+
+  dashTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    dashTabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTab(btn.dataset.tab);
+  });
+
+  renderTab('overview');
+
+  // Provider toggles (single-select behavior)
+  function setupExclusiveToggles(containerId, bannerUpdate) {
+    const container = document.getElementById(containerId);
+    const checkboxes = container.querySelectorAll('input[type=checkbox]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) {
+          checkboxes.forEach(other => { if (other !== cb) other.checked = false; });
+        } else {
+          cb.checked = true; // at least one must remain active
+        }
+        bannerUpdate();
+      });
+    });
+  }
+
+  function updateBanner() {
+    const imgLabel = document.querySelector('#imageProviders input:checked')?.closest('div').querySelector('span').textContent;
+    const vidLabel = document.querySelector('#videoProviders input:checked')?.closest('div').querySelector('span').textContent;
+    document.getElementById('activeProviderBanner').innerHTML =
+      `Active → Image: <span class="font-semibold text-white">${imgLabel}</span> &nbsp;|&nbsp; Video: <span class="font-semibold text-white">${vidLabel}</span>`;
+  }
+
+  setupExclusiveToggles('imageProviders', updateBanner);
+  setupExclusiveToggles('videoProviders', updateBanner);
+
+  // PWA: register service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(err => {
+        console.warn('Service worker registration failed:', err);
+      });
+    });
+  }
+
+  // PWA: install prompt handling
+  let deferredInstallPrompt = null;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    installBtn.classList.remove('hidden');
+    installBtn.classList.add('flex');
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.classList.add('hidden');
+    installBtn.classList.remove('flex');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.classList.add('hidden');
+    installBtn.classList.remove('flex');
+  });
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      mobileMenu.classList.add('hidden');
+    });
+  });
+</script>
+ </body>
+</html>
