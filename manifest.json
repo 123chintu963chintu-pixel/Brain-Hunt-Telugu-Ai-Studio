@@ -1,0 +1,25 @@
+{
+  "name": "Brain Hunt Telugu AI Studio",
+  "short_name": "Brain Hunt AI",
+  "description": "Brain Hunt Telugu AI Studio - Production-Grade AI Studio with Image AI, Video AI and Owner Dashboard.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#05050a",
+  "theme_color": "#05050a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
